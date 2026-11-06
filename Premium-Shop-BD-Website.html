@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Shop BD — Shop Smart • Live Better</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #0b0b0d; color: #f8fafc; }
+    .topbar { background: #08080a; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 8px 20px; font-size: 12px; color: #cbd5e1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .header { max-width: 1280px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .brand { font-size: 22px; font-weight: 800; color: #ffffff; }
+    .brand span { color: #f5c518; }
+    .search-box { display: flex; flex: 1; max-width: 480px; background: #fff; border-radius: 999px; padding: 4px; }
+    .search-box input { flex: 1; border: none; outline: none; padding: 6px 14px; font-size: 14px; border-radius: 999px; }
+    .search-box button { background: #f5c518; color: #0b0b0d; border: none; border-radius: 999px; padding: 8px 18px; font-weight: 700; cursor: pointer; }
+    .cart-btn { background: #f5c518; color: #0b0b0d; border: none; border-radius: 12px; padding: 10px 16px; font-weight: 800; cursor: pointer; }
+    .hero { background: linear-gradient(135deg, #09090b 35%, #2b2106 100%); border-top: 2px solid #f5c518; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 48px 20px; text-align: center; }
+    .hero h1 { font-size: 40px; font-weight: 800; margin: 8px 0; }
+    .hero h1 span { color: #f5c518; font-style: italic; }
+    .hero-badge { display: inline-block; background: #f5c518; color: #0b0b0d; font-weight: 800; padding: 6px 18px; border-radius: 6px; margin-top: 8px; }
+    .cats { max-width: 1280px; margin: 20px auto 0; padding: 0 20px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .cat-btn { background: #151519; color: #e2e8f0; border: 1px solid rgba(255,255,255,0.15); border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .cat-btn.active { background: #f5c518; color: #0b0b0d; border-color: #f5c518; }
+    .grid { max-width: 1280px; margin: 24px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+    .card { background: #ffffff; color: #0f172a; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+    .disc { display: inline-block; background: #ef4444; color: #fff; font-size: 12px; font-weight: 800; padding: 2px 10px; border-radius: 999px; width: fit-content; }
+    .card-title { font-size: 16px; font-weight: 700; margin-top: 14px; text-align: center; }
+    .card-brand { font-size: 12px; color: #64748b; text-align: center; margin-top: 4px; }
+    .price-row { display: flex; justify-content: center; align-items: baseline; gap: 8px; margin-top: 8px; }
+    .price { color: #ef4444; font-size: 18px; font-weight: 800; }
+    .old-price { color: #94a3b8; font-size: 13px; text-decoration: line-through; }
+    .add-btn { margin-top: 14px; width: 100%; background: #f5c518; color: #0b0b0d; border: none; border-radius: 10px; padding: 10px; font-weight: 800; cursor: pointer; }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; padding: 16px; }
+    .modal.open { display: flex; }
+    .modal-box { background: #141418; border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; width: 100%; max-width: 440px; padding: 20px; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>সারা বাংলাদেশে ডেলিভারি · নিরাপদ লেনদেন · সহজ রিটার্ন</div>
+    <div>হেল্পলাইন: <strong>01701-234567</strong></div>
+  </div>
+  <header class="header">
+    <div class="brand">PREMIUM <span>SHOP BD</span></div>
+    <div class="search-box">
+      <input id="q" type="text" placeholder="পণ্য খুঁজুন..." oninput="render()" />
+      <button onclick="render()">খুঁজুন</button>
+    </div>
+    <button class="cart-btn" onclick="toggleCart()">কার্ট (<span id="cart-count">0</span>)</button>
+  </header>
+  <section class="hero">
+    <div>স্টাইলিশ লাইফের জন্য</div>
+    <h1>Premium <span>Shop BD</span></h1>
+    <div class="hero-badge">সেরা পণ্য, সেরা দাম!</div>
+  </section>
+  <div class="cats" id="cats"></div>
+  <main class="grid" id="grid"></main>
+  <div class="modal" id="cart-modal" onclick="toggleCart()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3 style="margin-bottom:12px;">আপনার শপিং কার্ট</h3>
+      <div id="cart-items" style="font-size:14px;margin-bottom:14px;"></div>
+      <div id="cart-total" style="font-weight:800;color:#f5c518;margin-bottom:14px;"></div>
+      <button class="add-btn" onclick="checkout()">অর্ডার কনফার্ম করুন (Cash on Delivery)</button>
+    </div>
+  </div>
+  <script>
+    const PRODUCTS = [{"id":"nike-tshirt","name":"Nike T-Shirt (Premium)","nameBn":"নাইকি টি-শার্ট (প্রিমিয়াম)","brand":"Nike","category":"tshirt","price":750,"originalPrice":1000,"discountPercent":25},{"id":"premium-shirt","name":"Premium Shirt","nameBn":"প্রিমিয়াম ফরমাল ও ক্যাজুয়াল শার্ট","brand":"Aarong & Urban Craft","category":"shirt","price":1200,"originalPrice":1500,"discountPercent":20},{"id":"nike-hoodie","name":"Nike Hoodie","nameBn":"নাইকি প্রিমিয়াম উইন্টার হুডি","brand":"Nike","category":"hoodie","price":1750,"originalPrice":2500,"discountPercent":30},{"id":"casio-watch","name":"Casio Watch","nameBn":"ক্যাসিও স্টেইনলেস স্টিল ক্রোনোগ্রাফ ঘড়ি","brand":"Casio Edifice","category":"watch","price":2200,"originalPrice":2800,"discountPercent":22},{"id":"air-court-sneaker","name":"Nike Air Court Sneaker","nameBn":"নাইকি এয়ার কোর্ট প্রিমিয়াম স্নিকার্স","brand":"Nike","category":"shoes","price":2650,"originalPrice":3500,"discountPercent":24},{"id":"slim-denim-pant","name":"Urban Stretch Denim Pant","nameBn":"আরবান স্ট্রেচ ডেনিম প্যান্ট","brand":"Urban Craft","category":"pant","price":1350,"originalPrice":1800,"discountPercent":25},{"id":"bomber-winter-jacket","name":"Obsidian Puffer Jacket","nameBn":"অবসিডিয়ান প্রিমিয়াম পাফার জ্যাকেট","brand":"North Peak BD","category":"jacket","price":2850,"originalPrice":3800,"discountPercent":25},{"id":"executive-leather-bag","name":"Executive Leather Tote & Messenger Bag","nameBn":"এক্সিকিউটিভ লেদার ল্যাপটপ ও ট্রাভেল ব্যাগ","brand":"Dhaka Hide Co.","category":"bag","price":2450,"originalPrice":3200,"discountPercent":23},{"id":"gold-aviator-sunglasses","name":"Gold Frame Polarized Sunglasses","nameBn":"গোল্ড ফ্রেম পোলারাইজড সানগ্লাস","brand":"RayLux BD","category":"accessories","price":890,"originalPrice":1250,"discountPercent":29},{"id":"gold-ladies-watch","name":"Aurelia Gold Ladies Watch","nameBn":"অরেলিয়া গোল্ড লেডিস লাক্সারি ঘড়ি","brand":"Aurelia","category":"watch","price":1950,"originalPrice":2600,"discountPercent":25},{"id":"kids-star-hoodie","name":"Junior Golden Star Hoodie","nameBn":"জুনিয়র গোল্ডেন স্টার কিডস হুডি","brand":"Little Champs BD","category":"hoodie","price":950,"originalPrice":1300,"discountPercent":27},{"id":"royal-oud-perfume","name":"Royal Oud Eau De Parfum (100ml)","nameBn":"রয়্যাল উদ ও ডি পারফিউম (১০০ মি.লি.)","brand":"Nawab Fragrance","category":"others","price":1650,"originalPrice":2200,"discountPercent":25}];
+    let activeCat = 'all';
+    let cart = [];
+    const cats = ['all','tshirt','shirt','hoodie','watch','shoes','pant','jacket','bag','accessories','others'];
+    function renderCats() {
+      document.getElementById('cats').innerHTML = cats.map(c =>
+        '<button class="cat-btn ' + (activeCat===c?'active':'') + '" onclick="activeCat=\''+c+'\';renderCats();render();">' + c.toUpperCase() + '</button>'
+      ).join('');
+    }
+    function render() {
+      const q = document.getElementById('q').value.toLowerCase();
+      const list = PRODUCTS.filter(p => (activeCat==='all'||p.category===activeCat) && (p.name.toLowerCase().includes(q)||p.nameBn.toLowerCase().includes(q)));
+      document.getElementById('grid').innerHTML = list.map(p =>
+        '<div class="card"><div><span class="disc">-' + p.discountPercent + '%</span><div class="card-title">' + p.nameBn + '</div><div class="card-brand">' + p.name + ' · ' + p.brand + '</div></div><div><div class="price-row"><span class="price">৳ ' + p.price + '</span><span class="old-price">৳ ' + p.originalPrice + '</span></div><button class="add-btn" onclick="addToCart(\''+p.id+'\')">কার্টে যোগ করুন</button></div></div>'
+      ).join('');
+    }
+    function addToCart(id) {
+      const p = PRODUCTS.find(x => x.id === id);
+      if (p) { cart.push(p); document.getElementById('cart-count').innerText = cart.length; }
+    }
+    function toggleCart() {
+      const m = document.getElementById('cart-modal');
+      m.classList.toggle('open');
+      const total = cart.reduce((s,i)=>s+i.price,0);
+      document.getElementById('cart-items').innerHTML = cart.length ? cart.map(i=>'<div>• '+i.nameBn+' — ৳ '+i.price+'</div>').join('') : 'কার্ট খালি';
+      document.getElementById('cart-total').innerText = 'সর্বমোট: ৳ ' + total;
+    }
+    function checkout() {
+      if (!cart.length) return;
+      alert('অভিনন্দন! আপনার অর্ডার কনফার্ম হয়েছে। হেল্পলাইন: 01701-234567');
+      cart = []; document.getElementById('cart-count').innerText = '0'; toggleCart();
+    }
+    renderCats(); render();
+  </script>
+</body>
+</html>
